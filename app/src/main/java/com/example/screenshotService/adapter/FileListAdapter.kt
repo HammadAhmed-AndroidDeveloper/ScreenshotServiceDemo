@@ -3,8 +3,6 @@ package com.example.screenshotService.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -12,8 +10,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.screenshotService.R
-import com.example.screenshotService.ads.AdsInterstitial
-import com.example.screenshotService.ads.ManageNativeAd
 import com.example.screenshotService.model.FileItem
 import javax.inject.Inject
 
@@ -21,49 +17,20 @@ class FileListAdapter @Inject constructor() :
     ListAdapter<FileItem, RecyclerView.ViewHolder>(FileDiffCallback()) {
 
     private var listener: FileListener? = null
-
-    // For AD
-    private var activity: AppCompatActivity? = null
-
-    private lateinit var nativeAd: ManageNativeAd
-
-    fun setActivity(activity: AppCompatActivity) {
-        this.activity = activity
-// in order to skip no fill or too man requests error
-        nativeAd = ManageNativeAd(activity)
-    }
-
-
     fun setListener(listener: FileListener) {
         this.listener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            ITEM_VIEW_TYPE_FILE -> {
-                val view =
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_file, parent, false)
-                FileViewHolder(view)
-            }
-
-            ITEM_VIEW_TYPE_AD -> {
-                val adView =
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_ad, parent, false)
-                AdViewHolder(adView)
-            }
-
-            else -> throw IllegalArgumentException("Invalid view type")
-        }
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_file, parent, false)
+       return FileViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         val item = getItem(position)
         when (holder.itemViewType) {
-            ITEM_VIEW_TYPE_AD -> {
-                val h = holder as AdViewHolder
-                h.loadAd()
-            }
 
             ITEM_VIEW_TYPE_FILE -> {
                 // Bind file view holder
@@ -88,18 +55,6 @@ class FileListAdapter @Inject constructor() :
         val moreOptions: AppCompatImageView = itemView.findViewById(R.id.moreOptions)
     }
 
-    inner class AdViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Declare and initialize your ad view here
-        val frame: FrameLayout = itemView.findViewById(R.id.frame)
-
-
-        fun loadAd() {
-            if (activity?.let { AdsInterstitial.isNetworkAvailable(it) } == true) {
-
-                nativeAd.loadAdmobNativeAd(frame)
-            }
-        }
-    }
 
     private fun showPopupMenu(view: View, position: Int) {
         val popupMenu = PopupMenu(view.context, view)

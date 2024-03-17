@@ -23,8 +23,6 @@ import com.example.screenshotService.R
 import com.example.screenshotService.adapter.FileListAdapter
 import com.example.screenshotService.adapter.FileListAdapter.Companion.ITEM_VIEW_TYPE_AD
 import com.example.screenshotService.adapter.FileListener
-import com.example.screenshotService.ads.loadInterstitialAd
-import com.example.screenshotService.ads.showInterstitial
 import com.example.screenshotService.databinding.ActivityMainBinding
 import com.example.screenshotService.model.FileItem
 import com.example.screenshotService.repo.ImageViewModel
@@ -61,11 +59,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        MobileAds.initialize(
-            this
-        ) {}
-
-
         Toast.makeText(
             this@MainActivity,
             "Developed By Hammad Ahmed on 27 Feb 11:16pm",
@@ -76,13 +69,9 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = binding.recyclerView
         mSwipeRefreshLayout = binding.swipeToRefresh
-        adapter.setActivity(this@MainActivity)
+
         val gridLayoutManager = GridLayoutManager(this@MainActivity, 2)
-        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return if (position % 3 == 2) 2 else 1
-            }
-        }
+
         recyclerView.layoutManager = gridLayoutManager
 
         mSwipeRefreshLayout.setOnRefreshListener {
@@ -171,12 +160,10 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setListener(object : FileListener {
             override fun open(position: Int) {
-                showInterstitial {
                     Intent(this@MainActivity, PreviewActivity::class.java).apply {
                         putExtra("path", imagesList[position].path)
                         startActivity(this)
                     }
-                }
             }
 
             override fun share(position: Int) {
@@ -240,10 +227,5 @@ class MainActivity : AppCompatActivity() {
         } else {
             startService(intent);
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadInterstitialAd()
     }
 }
