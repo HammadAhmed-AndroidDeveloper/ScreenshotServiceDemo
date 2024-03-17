@@ -59,12 +59,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Toast.makeText(
-            this@MainActivity,
-            "Developed By Hammad Ahmed on 27 Feb 11:16pm",
-            Toast.LENGTH_SHORT
-        ).show()
-
         mpManager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
         recyclerView = binding.recyclerView
@@ -81,8 +75,7 @@ class MainActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkPermissionsAndExecute(listOf(
-                Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.READ_MEDIA_IMAGES
+                Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.READ_MEDIA_IMAGES
             ), onPermissionGranted = {
                 getAllScreenshots()
                 if (!Settings.canDrawOverlays(this)) {
@@ -91,13 +84,6 @@ class MainActivity : AppCompatActivity() {
                     myIntent.setData(Uri.parse("package:$packageName"))
                     startActivityForResult(myIntent, REQUEST_CODE)
                 }
-//                else if (!isServiceRunning()) {
-//                    val captureIntent = mpManager?.createScreenCaptureIntent()
-//                    if (captureIntent != null) {
-//                        startActivityForResult(captureIntent, REQUEST_CODE_SCREEN_SHOT)
-//                    }
-//
-//                }
             }, onPermissionDenied = {
 
             })
@@ -160,10 +146,10 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setListener(object : FileListener {
             override fun open(position: Int) {
-                    Intent(this@MainActivity, PreviewActivity::class.java).apply {
-                        putExtra("path", imagesList[position].path)
-                        startActivity(this)
-                    }
+                Intent(this@MainActivity, PreviewActivity::class.java).apply {
+                    putExtra("path", imagesList[position].path)
+                    startActivity(this)
+                }
             }
 
             override fun share(position: Int) {
